@@ -46,7 +46,6 @@ GLboolean BicubicBezierPatch::CalculatePartialDerivatives(GLdouble u, GLdouble v
     if ( u < 0.0 || u > 1.0 || v < 0.0 ||  v > 1.0 )
         return GL_FALSE;
 
-    // b l e n d i n g f u n c t i o n v a l u e s and t h e i r d e r i v a t i v e s i n u??d i r e c t i o n
     RowMatrix<GLdouble> u_blending_values(4), d1_u_blending_values(4);
     GLdouble u2 = u*u , u3 = u2*u , wu = 1.0 - u , wu2 = wu*wu , wu3 = wu2*wu ;
 
@@ -60,7 +59,6 @@ GLboolean BicubicBezierPatch::CalculatePartialDerivatives(GLdouble u, GLdouble v
     d1_u_blending_values(2) = -3.0 *u2 + 6.0 * wu * u ;
     d1_u_blending_values(3) = 3.0 * u2 ;
 
-    // b l e n d i n g f u n c t i o n v a l u e s and t h e i r d e r i v a t i v e s i n v??d i r e c t i o n
     RowMatrix<GLdouble> v_blending_values(4), d1_v_blending_values(4);
     GLdouble v2 = v * v , v3 = v2 *v , wv = 1.0- v , wv2 = wv* wv , wv3 = wv2 *wv ;
     //homework

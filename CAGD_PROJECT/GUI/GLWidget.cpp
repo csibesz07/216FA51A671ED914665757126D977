@@ -20,7 +20,6 @@ GLWidget::GLWidget(QWidget *parent, const QGLFormat &format): QGLWidget(format, 
 //--------------------------------------------------------------------------------------
 void GLWidget::initializeGL()
 {
-    glewInit();
 
     // creating a perspective projection matrix
     glMatrixMode(GL_PROJECTION);
@@ -43,6 +42,8 @@ void GLWidget::initializeGL()
     _up[0] = _up[2] = 0.0, _up[1] = 1.0;
 
     gluLookAt(_eye[0], _eye[1], _eye[2], _center[0], _center[1], _center[2], _up[0], _up[1], _up[2]);
+
+    glewInit();
 
     // enabling depth test
     glEnable(GL_DEPTH_TEST);
