@@ -1,6 +1,13 @@
 #include "BicubicBezierPatches.h"
+#include "../Core/Exceptions.h"
+
+#define TOP_SIDE 1
+#define BOTTOM_SIDE 2
+#define LEFT_SIDE -1
+#define RIGHT_SIDE -2
 
 using namespace cagd;
+
 
 BicubicBezierPatch::BicubicBezierPatch(): TensorProductSurface3(0.0 , 1.0 , 0.0 , 1.0 , 4 , 4)
 {
@@ -47,29 +54,29 @@ GLboolean BicubicBezierPatch::CalculatePartialDerivatives(GLdouble u, GLdouble v
         return GL_FALSE;
 
     RowMatrix<GLdouble> u_blending_values(4), d1_u_blending_values(4);
-    GLdouble u2 = u*u , u3 = u2*u , wu = 1.0 - u , wu2 = wu*wu , wu3 = wu2*wu ;
+    GLdouble u2 = u*u , u3 = u2*u , iu = 1.0 - u , iu2 = iu*iu , iu3 = iu2*iu ;
 
-    u_blending_values(0) = wu3 ;
-    u_blending_values(1) = 3.0*wu2*u ;
-    u_blending_values(2) = 3.0*wu*u2 ;
+    u_blending_values(0) = iu3 ;
+    u_blending_values(1) = 3.0*iu2*u ;
+    u_blending_values(2) = 3.0*iu*u2 ;
     u_blending_values(3) = u3 ;
 
-    d1_u_blending_values(0) = -3.0*wu2 ;
-    d1_u_blending_values(1)= -6.0*wu * u + 3.0* wu2 ;
-    d1_u_blending_values(2) = -3.0 *u2 + 6.0 * wu * u ;
+    d1_u_blending_values(0) = -3.0*iu2 ;
+    d1_u_blending_values(1)= -6.0*iu * u + 3.0* iu2 ;
+    d1_u_blending_values(2) = -3.0 *u2 + 6.0 * iu * u ;
     d1_u_blending_values(3) = 3.0 * u2 ;
 
     RowMatrix<GLdouble> v_blending_values(4), d1_v_blending_values(4);
-    GLdouble v2 = v * v , v3 = v2 *v , wv = 1.0- v , wv2 = wv* wv , wv3 = wv2 *wv ;
-    //homework
-    v_blending_values(0)= wv3;
-    v_blending_values(1)= 3.0*wv2*v ;
-    v_blending_values(2)= 3.0*wv*v2 ;
+    GLdouble v2 = v * v , v3 = v2 *v , iv = 1.0- v , iv2 = iv* iv , iv3 = iv2 *iv ;
+
+    v_blending_values(0)= iv3;
+    v_blending_values(1)= 3.0*iv2*v ;
+    v_blending_values(2)= 3.0*iv*v2 ;
     v_blending_values(3)= v3 ;
 
-    d1_v_blending_values(0) = -3.0*wv2 ;
-    d1_v_blending_values(1) = -6.0*wv * v + 3.0* wv2 ;
-    d1_v_blending_values(2) = -3.0 *v2 + 6.0 * wv * v ;
+    d1_v_blending_values(0) = -3.0*iv2 ;
+    d1_v_blending_values(1) = -6.0*iv * v + 3.0* iv2 ;
+    d1_v_blending_values(2) = -3.0 *v2 + 6.0 * iv * v ;
     d1_v_blending_values(3) = 3.0 * v2 ;
 
     pd.LoadNullVectors();
@@ -90,16 +97,63 @@ GLboolean BicubicBezierPatch::CalculatePartialDerivatives(GLdouble u, GLdouble v
 
 }
 
-//void CompositeBezierSurface::InsertNewPatch(const Matrix<DCoordinate3>& control_net)
-//{
+void CompositeBezierSurface::InsertNewPatch(GLdouble u_min,GLdouble u_max,GLdouble v_min,GLdouble v_max)
+{
+    Entity *newEntity=new Entity();
+    BicubicBezierPatch *newPatch=new BicubicBezierPatch();
 
-//}
+    (*newEntity).patch=newPatch;
+
+    GLdouble step_u = (u_max - u_min) / 3;
+    GLdouble step_v = (v_max - v_min) / 3;
+
+    for (GLuint i = 0; i < 4; ++i)
+    {
+        GLdouble u = u_min + i * step_u;
+
+        for (GLuint j = 0; j < 4; ++j)
+        {
+            GLdouble v = v_min + j * step_v;
+
+            DCoordinate3 &ref = (*newPatch)(i,j);
+
+            ref[0] = u;
+            ref[1] = v;
+            ref[2] = (v+u)/2;
+        }
+    }
+
+    try
+    {
+        if (!newPatch->UpdateVertexBufferObjectsOfData())
+            throw Exception("Could not update the VBO of the control net!");
+        (*newEntity).mesh = newPatch->GenerateImage(50, 50);
+        if (!(*newEntity).mesh)
+        {
+            throw "Mesh error";
+        }
+        if (!(*newEntity).mesh->UpdateVertexBufferObjects())
+        {
+            throw "VBO error";
+        }
+        _entities.push_back(*newEntity);
+    }
+    catch (Exception &e)
+    {
+        std::cout << e << std::endl;
+    }
+}
 
 void CompositeBezierSurface::InsertNewPatch(const Entity entity)
 {
     _entities.insert(_entities.end(),entity);
-    //    _entities.push_back(entity);
 }
+
+/*
+#define TOP_SIDE 1
+#define BOTTOM_SIDE 2
+#define LEFT_SIDE -1
+#define RIGHT_SIDE -2*/
 
 GLboolean CompositeBezierSurface::JoinExistingTwoPatches(GLuint patch_1, GLuint boundary_1, GLuint patch_2, GLuint boundary_2)
 {
@@ -112,6 +166,8 @@ GLboolean CompositeBezierSurface::JoinExistingTwoPatches(GLuint patch_1, GLuint 
     {
         for (GLuint i = 0 ; i < 4 ; ++i)
         {
+            //MOD SOR/OSZLOP
+            //ABS BAL/JOBB FENT/LENT
             _ent1.patch->GetData(1,i,x1,y1,z1);
             _ent2.patch->GetData(2,i,x2,y2,z2);
             _ent2.patch->SetData(3,i,(x1+x2)/2,(y1+y2)/2,(z1+z2)/2);
@@ -210,7 +266,6 @@ Entity& CompositeBezierSurface::operator [](unsigned int i)
     return _entities.at(i);
 }
 
-CompositeBezierSurface::CompositeBezierSurface(unsigned int i)
+CompositeBezierSurface::CompositeBezierSurface()
 {
-    _entities.resize(i);
 }

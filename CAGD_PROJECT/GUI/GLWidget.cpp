@@ -2,6 +2,7 @@
 #include "../Core/Materials.h"
 #include "../Core/Constants.h"
 #include "../Core/Exceptions.h"
+
 using namespace cagd;
 using namespace std;
 //--------------------------------
@@ -13,6 +14,10 @@ GLWidget::GLWidget(QWidget *parent, const QGLFormat &format): QGLWidget(format, 
     _timer->setInterval(0);
 
     connect( _timer , SIGNAL(timeout()) , this , SLOT(_animate()) ) ;
+}
+
+void getMouse(int x, int y) {
+    std::cout<<x<<y;
 }
 
 //--------------------------------------------------------------------------------------
@@ -57,104 +62,30 @@ void GLWidget::initializeGL()
     _trans_x = _trans_y = _trans_z = 0.0;
 
 
-
-    cs = new CompositeBezierSurface(2);
-    //--------------------------------------------elso patch----------------------------------------------
-    (*cs)[0].patch = new BicubicBezierPatch();
-    GLdouble u_min = -2.0, u_max = +2.0, v_min = -2.0, v_max = 2.0;
-
-    GLdouble step_u = (u_max - u_min) / (4 - 1), step_v = (v_max - v_min) / 3;
-
-    for (GLuint i = 0; i < 4; ++i)
-    {
-        GLdouble u = u_min + i * step_u;
-
-        for (GLuint j = 0; j < 4; ++j)
-        {
-            GLdouble v = v_min + j * step_v;
-
-            DCoordinate3 &ref = (*(*cs)[0].patch)(i,j);
-
-            ref[0] = u;
-            ref[1] = v;
-            ref[2] = (-2.0 + 4.0 * rand() / (GLdouble)RAND_MAX);
-        }
-    }
-    try
-    {
-        if (!(*cs)[0].patch->UpdateVertexBufferObjectsOfData())
-            throw Exception("Could not update the VBO of the control net!");
-        (*cs)[0].mesh = (*cs)[0].patch->GenerateImage(50, 50);       //halo letrehozasa
-        if (!(*cs)[0].mesh)
-        {
-            throw "Mesh error";
-        }
-        if (!(*cs)[0].mesh->UpdateVertexBufferObjects())
-        {
-            throw "VBO error";
-        }
-    }
-    catch (Exception &e)
-    {
-        cout << e << endl;
-    }
-    cs->InsertNewPatch((*cs)[0]);
+    setMouseTracking(true);
 
 
 
-    //--------------------------------------------masodik patch----------------------------------------------
 
-    (*cs)[1].patch = new BicubicBezierPatch();
-    u_min = -2.0, u_max = +2.0, v_min = -2.0, v_max = 2.0;
-
-    step_u = (u_max - u_min) / (4 - 1), step_v = (v_max - v_min) / 3;
-
-    DCoordinate3 direction = DCoordinate3(-5,0,0);
-    for (GLuint i = 0; i < 4; ++i)
-    {
-        GLdouble u = u_min + i * step_u;
-
-        for (GLuint j = 0; j < 4; ++j)
-        {
-            GLdouble v = v_min + j * step_v;
-
-            DCoordinate3 &ref = (*(*cs)[1].patch)(i,j);
-
-            ref[0] = u;
-            ref[1] = v;
-            ref[2] = (-2.0 + 4.0 * rand() / (GLdouble)RAND_MAX);
-            ref+=direction;
-        }
-    }
-    try
-    {
-        if (!(*cs)[1].patch->UpdateVertexBufferObjectsOfData())
-            throw Exception("Could not update the VBO of the control net!");
-        (*cs)[1].mesh = (*cs)[1].patch->GenerateImage(50, 50);       //halo letrehozasa
-        if (!(*cs)[1].mesh)
-        {
-            throw "Mesh error";
-        }
-        if (!(*cs)[1].mesh->UpdateVertexBufferObjects())
-        {
-            throw "VBO error";
-        }
-    }
-    catch (Exception &e)
-    {
-        cout << e << endl;
-    }
-    cs->InsertNewPatch((*cs)[1]);
+    cs = new CompositeBezierSurface();
+    cs->InsertNewPatch(-2,2,1,2);
+    cs->InsertNewPatch(-2,2,-1,0);
 
 
     cout << "Vektor hossza: " << cs->_entities.size()<< "\n";
 
 
-    cs->JoinExistingTwoPatches(1,1,2,3);
+    //cs->JoinExistingTwoPatches(1,1,2,3);
 
 }
 
-//-----------------------
+
+void GLWidget::mouseMoveEvent(QMouseEvent *event){
+    std::cout<<"hello";
+
+}
+
+//-------------------
 // the rendering function
 //-----------------------
 void GLWidget::paintGL()
@@ -193,8 +124,8 @@ void GLWidget::paintGL()
     }
     glEnable(GL_LIGHTING);
 
-    int i = -1;
-    for(std::vector<Entity>::iterator it = cs->_entities.begin(); it != cs->_entities.end() && i < 1; ++it, ++i)
+    int i = 0;
+    for(std::vector<Entity>::iterator it = cs->_entities.begin(); it != cs->_entities.end(); ++it, ++i)
     {
         if (it->mesh)
         {
@@ -203,10 +134,10 @@ void GLWidget::paintGL()
             case 0:
                 MatFBRuby.Apply();
                 break;
-            case 1:
+            case 2:
                 MatFBBrass.Apply();
                 break;
-            case 2:
+            case 1:
                 MatFBTurquoise.Apply();
                 break;
             }

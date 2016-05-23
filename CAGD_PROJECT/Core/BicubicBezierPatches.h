@@ -1,4 +1,19 @@
 #pragma once
+/*
+*-----------------------+1--------------------------*
+|                 central widget                    |
+|                                                   |
+|  *---------------------------*-----------------*  |
+|  |     rendering context     |   scroll area   |  |
+|  |       OpenGL widget       | *-------------* |  |
+-1 |                           | | side widget | |  -2
+|  |                           | |             | |  |
+|  |                           | |             | |  |
+|  |                           | *-------------* |  |
+|  *---------------------------*-----------------*  |
+|                                                   |
+*--------------------+2------------------------------*
+*/
 
 #include "TensorProductSurfaces3.h"
 #include "Materials.h"
@@ -10,9 +25,6 @@ namespace cagd
 {
     class BicubicBezierPatch: public TensorProductSurface3
     {
-    protected:
-        //melyik patchnek melyik a szomszedai, 8 db
-        std::vector<BicubicBezierPatch*> _neighbors;
     public:
         BicubicBezierPatch();
         // we have to implement pure virtual methods introduced in class TensorProductSurface3
@@ -28,6 +40,8 @@ namespace cagd
         Material           material;
         TriangulatedMesh3   *mesh;
         ShaderProgram      shader;
+    protected:
+        std::vector<BicubicBezierPatch*> _neighbours;
     public:
         DCoordinate3 getItem(GLuint i, GLuint j);
     };
@@ -41,7 +55,8 @@ namespace cagd
 
     public:
         Entity& operator [](unsigned int i);
-        CompositeBezierSurface(unsigned int i);
+        CompositeBezierSurface();
+        void InsertNewPatch(GLdouble u_min,GLdouble u_max,GLdouble v_min,GLdouble v_max);
         void InsertNewPatch(const Entity entity);
         //itt osszekotjuk , amit lerajzolt a lapon
         GLboolean JoinExistingTwoPatches(GLuint patch_1, GLuint boundary_1, GLuint patch_2, GLuint boundary_2);
