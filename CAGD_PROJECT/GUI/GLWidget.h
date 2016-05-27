@@ -9,6 +9,7 @@
 #include "../Core/TriangulatedMeshes3.h"
 #include "../Core/ShaderPrograms.h"
 #include "../Core/BicubicBezierPatches.h"
+#include "../Core/Entity.h"
 
 class GLWidget: public QGLWidget
 {
@@ -42,7 +43,7 @@ private:
 
     cagd::BicubicBezierPatch     _patch;
     cagd::TriangulatedMesh3      *_before_interpolation, *_after_interpolation, *_mesh;
-    cagd::CompositeBezierSurface *cs;
+    std::vector<cagd::Entity*>    entities;
 
 public:
     // special and default constructor
