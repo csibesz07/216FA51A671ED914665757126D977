@@ -67,7 +67,22 @@ void GLWidget::initializeGL()
     Entity *e1 = new Entity(-2,2,1,2);
     entities.push_back(e1);
 
+    Entity *e2 = new Entity(-8,-4,-1,0);
+    entities.push_back(e2);
 
+<<<<<<< HEAD
+=======
+    Entity *e3 = new Entity(-8,-2,-5,-3);
+    entities.push_back(e3);
+
+    Entity *e4 = new Entity(0,4,-5,-2);
+    entities.push_back(e4);
+
+    //e1->JoinExistingTwoPatches(*e2,-1,-2);
+    e2->JoinExistingTwoPatches(*e3,1,2);
+    e3->JoinExistingTwoPatches(*e4,-2,-1);
+    e4->JoinExistingTwoPatches(*e1,2,1);
+>>>>>>> branchSz
 }
 
 
@@ -120,7 +135,7 @@ void GLWidget::paintGL()
     {
         if ((*it)->mesh)
         {
-            switch (i % 3)
+            switch (i % 5)
             {
             case 0:
                 MatFBRuby.Apply();
@@ -130,6 +145,12 @@ void GLWidget::paintGL()
                 break;
             case 1:
                 MatFBTurquoise.Apply();
+                break;
+            case 3:
+                MatFBEmerald.Apply();
+                break;
+            case 4:
+                MatFBGold.Apply();
                 break;
             }
             (*it)->mesh->Render();               //felulet kirajzolasa

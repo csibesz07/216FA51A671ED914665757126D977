@@ -1,7 +1,11 @@
 /********************************************************************************
 ** Form generated from reading UI file 'SideWidget.ui'
 **
+<<<<<<< HEAD
 ** Created: Fri May 27 14:39:55 2016
+=======
+** Created: Fri May 27 18:47:55 2016
+>>>>>>> branchSz
 **      by: Qt User Interface Compiler version 4.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
