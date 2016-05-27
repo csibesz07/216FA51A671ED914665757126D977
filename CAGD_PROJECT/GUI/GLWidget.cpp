@@ -64,18 +64,9 @@ void GLWidget::initializeGL()
 
     setMouseTracking(true);
 
+    Entity *e1 = new Entity(-2,2,1,2);
+    entities.push_back(e1);
 
-
-
-    cs = new CompositeBezierSurface();
-    cs->InsertNewPatch(-2,2,1,2);
-    cs->InsertNewPatch(-2,2,-1,0);
-
-
-    cout << "Vektor hossza: " << cs->_entities.size()<< "\n";
-
-
-    //cs->JoinExistingTwoPatches(1,1,2,3);
 
 }
 
@@ -109,15 +100,15 @@ void GLWidget::paintGL()
     glDisable(GL_LIGHTING);
 
     glColor4f(0.8, 0.8, 0.8, 1.0);
-    for(std::vector<Entity>::iterator it = cs->_entities.begin(); it != cs->_entities.end(); ++it)
+    for(std::vector<cagd::Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
     {
-        it->patch->UpdateVertexBufferObjectsOfData();
-        it->patch->RenderData();              //halo kirajzolasa
+        (*it)->patch->UpdateVertexBufferObjectsOfData();
+        (*it)->patch->RenderData();              //halo kirajzolasa
         for(int i = 0; i < 4; i++)
         {
             for(int j = 0; j < 4; j++)
             {
-                DCoordinate3 &ref = (*(*it).patch)(i,j);
+                DCoordinate3 &ref = (*(*it)->patch)(i,j);
                 renderText(ref[0],ref[1],ref[2],QString::number(i)+", " +QString::number(j));
             }
         }
@@ -125,9 +116,9 @@ void GLWidget::paintGL()
     glEnable(GL_LIGHTING);
 
     int i = 0;
-    for(std::vector<Entity>::iterator it = cs->_entities.begin(); it != cs->_entities.end(); ++it, ++i)
+    for(std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it, ++i)
     {
-        if (it->mesh)
+        if ((*it)->mesh)
         {
             switch (i % 3)
             {
@@ -141,7 +132,7 @@ void GLWidget::paintGL()
                 MatFBTurquoise.Apply();
                 break;
             }
-            it->mesh->Render();               //felulet kirajzolasa
+            (*it)->mesh->Render();               //felulet kirajzolasa
         }
     }
 

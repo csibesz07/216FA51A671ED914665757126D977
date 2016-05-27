@@ -23,6 +23,7 @@ SOURCES += main.cpp\
     GUI/SideWidget.cpp \
     GUI/MainWindow.cpp \
     GUI/GLWidget.cpp \
+    Core/Entity.cpp
 
 HEADERS  += Core/TriangulatedMeshes3.h \
     Core/TriangularFaces.h \
@@ -43,7 +44,8 @@ HEADERS  += Core/TriangulatedMeshes3.h \
     Core/BicubicBezierPatches.h \
     GUI/SideWidget.h \
     GUI/MainWindow.h \
-    GUI/GLWidget.h
+    GUI/GLWidget.h \
+    Core/Entity.h
 
 OTHER_FILES += \
     Core/mouse.off \
