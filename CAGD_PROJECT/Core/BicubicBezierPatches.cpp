@@ -155,46 +155,69 @@ void CompositeBezierSurface::InsertNewPatch(const Entity entity)
 #define LEFT_SIDE -1
 #define RIGHT_SIDE -2*/
 
-GLboolean CompositeBezierSurface::JoinExistingTwoPatches(GLuint patch_1, GLuint boundary_1, GLuint patch_2, GLuint boundary_2)
+GLboolean CompositeBezierSurface::JoinExistingTwoPatches(Entity &_ent2 ,GLint boundary_1,GLint boundary_2)
 {
-    Entity &_ent1 = _entities[0];
-    Entity &_ent2 = _entities[1];
+//    Entity &_ent1 = _entities[0];
+    Entity &_ent1 =this;
 
     GLdouble x1,y1,z1, x2, y2, z2;
 
 //    if(boundary_1 == 1 && boundary_2 == 3)
-    {
+   // {
+
+    if((boundary_1 < 3 ) && (boundary_2 < 3 )){
+
+
         for (GLuint i = 0 ; i < 4 ; ++i)
         {
-            //MOD SOR/OSZLOP
-            //ABS BAL/JOBB FENT/LENT
-            _ent1.patch->GetData(1,i,x1,y1,z1);
-            _ent2.patch->GetData(2,i,x2,y2,z2);
-            _ent2.patch->SetData(3,i,(x1+x2)/2,(y1+y2)/2,(z1+z2)/2);
-            _ent1.patch->SetData(0,i,(x1+x2)/2,(y1+y2)/2,(z1+z2)/2);
 
-//            std::cout << "x1: " << x2 << " y1: " << y2 << "\n" ;
-//            _entities.at(patch_1) = _ent1;
-//            _entities.at(patch_2) = _ent2;
-            //            _ent1.patch->GetData(2,i,x2,y2,z2);
-            //            _ent2.patch->SetData(0,i,x1,y1,z1);
-            //            _ent2.patch->SetData(1,i,(2*x1-x2),(2*y1-y2),(2*z1-z2));
+            // + -  sor vagy oszlop az i vel  utanna  abs( melleirni  )
+            // mod hozzaadni ha 0 akk  hozzad 1  ha nem akkor -1 .
+            if(boundary_1 < 0){             //  ELSO folt i a masodik parameter
+                _ent1.patch->GetData(abs(boundary_1),i,x1,y1,z1);
+            }else{                          // ELSO folt i az elso parameter
+                _ent1.patch->GetData(i,abs(boundary_1) ,x1,y1,z1);
+            }
+            if(boundary_2 < 0){             // MASODIK folt i a masodik parameter
+                _ent2.patch->GetData(abs(boundary_2) ,i,x1,y1,z1);
+            }else{                          // MASODIK folti az elso parameter
+                _ent2.patch->GetData(i,abs(boundary_2),x1,y1,z1);
+            }
 
-            //            _ent2.patch->GetData(i,3,k,l,m);
-            //            _ent1.patch->SetData(i,0,k,l,m);
-            //            _ent2.patch->SetData(i,1,2 * (_ent1.patch(i,3)) - (_ent1.patch(i,2)));
+            if(boundary_1 < 0){             //  ELSO folt i a masodik parameter
+                _ent1.patch->SetData((boundary_1 % 2 == 0) ? abs(boundary_1)+1 : abs(boundary_1)-1,i,(x1+x2)/2,(y1+y2)/2,(z1+z2)/2);
+            }else{                          // ELSO folt i az elso parameter
+                _ent1.patch->SetData(i,(boundary_1 % 2 == 0) ? abs(boundary_1)+1 : abs(boundary_1)-1 ,(x1+x2)/2,(y1+y2)/2,(z1+z2)/2);
+            }
+
+
+            if(boundary_2 < 0){             //  MASODIK folt i a masodik parameter
+                _ent1.patch->SetData((boundary_2 % 2 == 0) ? abs(boundary_2)+1 : abs(boundary_2)-1,i,(x1+x2)/2,(y1+y2)/2,(z1+z2)/2);
+            }else{                          // MASOIDK folt i az elso parameter
+                _ent1.patch->SetData(i,(boundary_2 % 2 == 0) ? abs(boundary_2)+1 : abs(boundary_2)-1 ,(x1+x2)/2,(y1+y2)/2,(z1+z2)/2);
+            }
+
             _ent1.mesh = _ent1.patch->GenerateImage(50,50);
             _ent2.mesh = _ent2.patch->GenerateImage(50,50);
             _ent1.patch->UpdateVertexBufferObjectsOfData();
             _ent2.patch->UpdateVertexBufferObjectsOfData();
             _ent1.mesh->UpdateVertexBufferObjects();
             _ent2.mesh->UpdateVertexBufferObjects();
-//            _ent2.patch->UpdateVertexBufferObjectsOfData();
-//            _ent2.mesh = _ent2.patch->GenerateImage(50, 50);
-//            _ent2.mesh->UpdateVertexBufferObjects();
+        }
 
+    }
+    else{
+        if(((boundary_1 > 2 ) && (boundary_2 < 3 )) || ((boundary_1 < 3 ) && (boundary_2 >2))){
+            // ha nem megfelelo a bemeno adat
+            throw new Exception("Oldalt es atlot nem tudok osszevonni");
+        }else {
+
+            //APOR KOD
         }
     }
+
+
+
 //    else if(boundary_1 == 0 && boundary_2 == 2)
 //    {
 
