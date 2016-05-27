@@ -1,6 +1,7 @@
 #include "BicubicBezierPatches.h"
 #include "../Core/Exceptions.h"
-
+#include <cmath>
+#include <stdlib.h>     /* abs */
 #define TOP_SIDE 1
 #define BOTTOM_SIDE 2
 #define LEFT_SIDE -1
@@ -155,10 +156,13 @@ void CompositeBezierSurface::InsertNewPatch(const Entity entity)
 #define LEFT_SIDE -1
 #define RIGHT_SIDE -2*/
 
-GLboolean CompositeBezierSurface::JoinExistingTwoPatches(Entity &_ent2 ,GLint boundary_1,GLint boundary_2)
+//GLboolean CompositeBezierSurface::JoinExistingTwoPatches( Entity &_ent2 ,GLint boundary_1,GLint boundary_2)
+GLboolean CompositeBezierSurface::JoinExistingTwoPatches(GLuint patch_1, GLuint boundary_1, GLuint patch_2, GLuint boundary_2)
 {
-//    Entity &_ent1 = _entities[0];
-    Entity &_ent1 =this;
+
+    Entity &_ent1 = _entities[0];
+     Entity &_ent2 = _entities[1];
+    //Entity &_ent1 =this;
 
     GLdouble x1,y1,z1, x2, y2, z2;
 

@@ -75,7 +75,7 @@ void GLWidget::initializeGL()
     cout << "Vektor hossza: " << cs->_entities.size()<< "\n";
 
 
-    //cs->JoinExistingTwoPatches(1,1,2,3);
+    cs->JoinExistingTwoPatches(1,1,2,3);
 
 }
 

@@ -60,6 +60,7 @@ namespace cagd
         void InsertNewPatch(const Entity entity);
         //itt osszekotjuk , amit lerajzolt a lapon
         GLboolean JoinExistingTwoPatches(GLuint patch_1, GLuint boundary_1, GLuint patch_2, GLuint boundary_2);
+      //  GLboolean JoinExistingTwoPatches(Entity &ent2 ,GLint boundary_1,GLint boundary_2);
         //ezt nem tudom...?
         GLboolean ContinuePatch(GLuint patch, GLuint boundary, const Matrix<DCoordinate3> &control_net_fragment);
         void TranslatePatch(const DCoordinate3 &direction, GLuint indexPatch);     //ennyivel toljuk el a kozepen megjelenitett patchet
