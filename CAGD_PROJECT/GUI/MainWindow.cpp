@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "QHBoxLayout"
 
 MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 {
@@ -31,13 +32,14 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     _scroll_area->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
     _gl_widget = new GLWidget(this);
+    _gl_widget->setFocusPolicy(Qt::StrongFocus);
 
     centralWidget()->setLayout(new QHBoxLayout());
     centralWidget()->layout()->addWidget(_gl_widget);
     centralWidget()->layout()->addWidget(_scroll_area);
 
     // creating a signal slot mechanism between the rendering context and the side widget
-    connect(_side_widget->rotate_x_slider, SIGNAL(valueChanged(int)), _gl_widget, SLOT(set_angle_x(int)));
+    /*connect(_side_widget->rotate_x_slider, SIGNAL(valueChanged(int)), _gl_widget, SLOT(set_angle_x(int)));
     connect(_side_widget->rotate_y_slider, SIGNAL(valueChanged(int)), _gl_widget, SLOT(set_angle_y(int)));
     connect(_side_widget->rotate_z_slider, SIGNAL(valueChanged(int)), _gl_widget, SLOT(set_angle_z(int)));
 
@@ -49,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     connect(_side_widget->trans_z_spin_box, SIGNAL(valueChanged(double)), _gl_widget, SLOT(set_trans_z(double)));
 
     connect(_side_widget->shader_check_box, SIGNAL(clicked(bool)), _gl_widget, SLOT(setShaderStatus(bool)));
+    */
 
 }
 

@@ -7,24 +7,16 @@
 #include "ShaderPrograms.h"
 #include "TriangularFaces.h"
 #include "BicubicBezierPatches.h"
-<<<<<<< HEAD
-=======
 #include <map>
->>>>>>> branchSz
 
 namespace cagd
 {
     class Entity{
     public:
         BicubicBezierPatch *patch;
-        Material           material;
+        Material material;
         TriangulatedMesh3   *mesh;
         ShaderProgram      shader;
-<<<<<<< HEAD
-    protected:
-        std::vector<Entity*> _neighbours;
-    public:
-=======
         const static int SIDE_TOP=2;
         const static int SIDE_RIGHT_TOP=123;
         const static int SIDE_RIGHT=-2;
@@ -44,19 +36,19 @@ namespace cagd
         std::map< int , Entity* > _neighbours;
     public:
         Entity();
->>>>>>> branchSz
-        Entity(GLdouble u_min,GLdouble u_max,GLdouble v_min,GLdouble v_max);
-        Entity(const Entity &entity);
+        //Entity(const Entity &entity,Material m);
+        Entity(GLdouble u_min,GLdouble u_max,GLdouble v_min,GLdouble v_max,Material m=MatFBTurquoise);
+        Entity(Material m);
         DCoordinate3 getItem(GLuint i, GLuint j);
         Entity& operator [](unsigned int i);
         std::vector<Entity>& getNeighbours();
         Entity getNeighbours(GLuint i);
-<<<<<<< HEAD
-=======
         GLint whichNeighbour(Entity &e);
+        void materialApply();
+        void setMaterial(Material m);
+        Material& getMaterial();
         GLboolean JoinExistingTwoPatches(Entity &_ent2 ,GLint boundary_1,GLint boundary_2,int flag=NOT_UPDATE);
         GLboolean updateNeighbours(Entity &kivalto);
->>>>>>> branchSz
     };
 }
 

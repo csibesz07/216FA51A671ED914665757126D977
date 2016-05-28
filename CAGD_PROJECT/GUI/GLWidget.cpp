@@ -61,17 +61,14 @@ void GLWidget::initializeGL()
     _angle_x = _angle_y = _angle_z = 0.0;
     _trans_x = _trans_y = _trans_z = 0.0;
 
-
     setMouseTracking(true);
 
-    Entity *e1 = new Entity(-2,2,1,2);
+    Entity *e1 = new Entity(-2,2,1,2,MatFBBrass);
     entities.push_back(e1);
 
     Entity *e2 = new Entity(-8,-4,-1,0);
     entities.push_back(e2);
 
-<<<<<<< HEAD
-=======
     Entity *e3 = new Entity(-8,-2,-5,-3);
     entities.push_back(e3);
 
@@ -82,12 +79,135 @@ void GLWidget::initializeGL()
     e2->JoinExistingTwoPatches(*e3,1,2);
     e3->JoinExistingTwoPatches(*e4,-2,-1);
     e4->JoinExistingTwoPatches(*e1,2,1);
->>>>>>> branchSz
+
+    selected=0;
+    lastPos.setX(0);
+    lastPos.setY(0);
+    _move_camera=false;
 }
 
 
 void GLWidget::mouseMoveEvent(QMouseEvent *event){
-    std::cout<<"hello";
+
+    //selection
+    int index=0;
+    glReadPixels(event->x(), height()-event->y(), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+    if (index>0) {
+        if (selected!=0) {
+            selected->setMaterial(selectedMaterial);
+        }
+        selected=entities[index-1];
+        selectedMaterial.setMaterial(entities[index-1]->getMaterial());
+        entities[index-1]->setMaterial(MatFBEmerald);
+        updateGL();
+    }
+    else {
+        if (selected!=0) {
+            selected->setMaterial(selectedMaterial);
+            updateGL();
+        }
+    }
+
+    //camera rotation
+    int dx = event->x() - lastPos.x();
+    int dy = event->y() - lastPos.y();
+
+    qDebug() << dx<<" "<<dy;
+
+    if (event->buttons() & Qt::LeftButton) {
+        if (!_move_camera) {
+            _angle_x+= dy;
+            _angle_y+= dx;
+        }
+        else {
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            _center[0]+=dx/(double)5;
+            _center[1]-=dy/(double)5;
+            gluLookAt(_eye[0], _eye[1], _eye[2], _center[0], _center[1], _center[2], _up[0], _up[1], _up[2]);
+        }
+        updateGL();
+    } else if (event->buttons() & Qt::RightButton) {
+        if (!_move_camera) {
+            _angle_x+= dy;
+            _angle_z+= dx;
+        }
+        else {
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
+            _center[0]+=dx/(double)5;
+            _center[1]-=dy/(double)5;
+            gluLookAt(_eye[0], _eye[1], _eye[2], _center[0], _center[1], _center[2], _up[0], _up[1], _up[2]);
+        }
+        updateGL();
+    }
+    lastPos = event->pos();
+}
+
+void GLWidget::wheelEvent(QWheelEvent *event)
+{
+    _zoom+=event->delta()/(double)1000*_zoom;
+    //qDebug() << _zoom;
+    updateGL();
+}
+
+void GLWidget::keyPressEvent(QKeyEvent* event) {
+    //qDebug()<< event->key() << " "<< Qt::Key_Left <<"\n";
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    if (event->key()==Qt::Key_Left || event->key()==Qt::Key_A) {
+        //qDebug() << "LEFT\n";
+        if (!_move_camera) {
+            _eye[0]-=.15;
+            _center[0]-=.2;
+            gluLookAt(_eye[0], _eye[1], _eye[2], _center[0], _center[1], _center[2], _up[0], _up[1], _up[2]);
+        }
+        else {
+            _trans_x-=.2;
+        }
+        updateGL();
+    }
+    else if (event->key()==Qt::Key_Right || event->key()==Qt::Key_D) {
+        //qDebug() << "RIGHT\n";
+        if (!_move_camera) {
+            _eye[0]+=.15;
+            _center[0]+=.2;
+            gluLookAt(_eye[0], _eye[1], _eye[2], _center[0], _center[1], _center[2], _up[0], _up[1], _up[2]);
+        }
+        else {
+            _trans_x+=.2;
+        }updateGL();
+    }
+    else if (event->key()==Qt::Key_Up || event->key()==Qt::Key_W) {
+        //qDebug() << "UP\n";
+        if (!_move_camera) {
+            _eye[1]+=.15;
+            _center[1]+=.2;
+            gluLookAt(_eye[0], _eye[1], _eye[2], _center[0], _center[1], _center[2], _up[0], _up[1], _up[2]);
+        }else {
+            _trans_y+=.2;
+        }updateGL();
+    }
+    else if (event->key()==Qt::Key_Down || event->key()==Qt::Key_S) {
+        //qDebug() << "DOWN\n";
+        if (!_move_camera) {_eye[1]-=.15;
+            _center[1]-=.2;
+            gluLookAt(_eye[0], _eye[1], _eye[2], _center[0], _center[1], _center[2], _up[0], _up[1], _up[2]);
+        }else {_trans_y-=.2;
+        }updateGL();
+    }
+    else if (event->key()==Qt::Key_F) {
+        _eye[2]+=.2;
+        _center[2]+=.2;
+        gluLookAt(_eye[0], _eye[1], _eye[2], _center[0], _center[1], _center[2], _up[0], _up[1], _up[2]);
+        updateGL();
+    }
+    else if (event->key()==Qt::Key_R) {
+        _eye[2]-=.2;
+        _center[2]-=.2;
+        gluLookAt(_eye[0], _eye[1], _eye[2], _center[0], _center[1], _center[2], _up[0], _up[1], _up[2]);
+        updateGL();
+    }
 
 }
 
@@ -96,8 +216,12 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event){
 //-----------------------
 void GLWidget::paintGL()
 {
-    // clears the color and depth buffers
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //STENCIL BUFFER az eger detektalasahoz
+
+    glClearStencil(0);
+    glClear(GL_STENCIL_BUFFER_BIT|GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 
     // stores/duplicates the original model view matrix
@@ -130,30 +254,13 @@ void GLWidget::paintGL()
     }
     glEnable(GL_LIGHTING);
 
-    int i = 0;
-    for(std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it, ++i)
+    for(std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
     {
-        if ((*it)->mesh)
-        {
-            switch (i % 5)
-            {
-            case 0:
-                MatFBRuby.Apply();
-                break;
-            case 2:
-                MatFBBrass.Apply();
-                break;
-            case 1:
-                MatFBTurquoise.Apply();
-                break;
-            case 3:
-                MatFBEmerald.Apply();
-                break;
-            case 4:
-                MatFBGold.Apply();
-                break;
-            }
-            (*it)->mesh->Render();               //felulet kirajzolasa
+        int i = std::distance(entities.begin(), it);
+        if ((*it)->mesh) {
+            (*it)->materialApply();
+            glStencilFunc(GL_ALWAYS, i + 1, -1);
+            (*it)->mesh->Render();
         }
     }
 
@@ -291,8 +398,4 @@ void GLWidget::setShaderStatus(bool value)
 
 GLWidget::~GLWidget()
 {
-    if ( _before_interpolation)
-        delete _before_interpolation, _before_interpolation = 0;
-    if (_after_interpolation)
-        delete _after_interpolation, _after_interpolation = 0;
 }

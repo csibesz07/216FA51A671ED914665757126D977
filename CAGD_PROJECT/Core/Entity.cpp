@@ -1,10 +1,6 @@
 #include "BicubicBezierPatches.h"
 #include "../Core/Exceptions.h"
 #include "Entity.h"
-<<<<<<< HEAD
-
-using namespace cagd;
-=======
 #include "cmath"
 
 using namespace cagd;
@@ -25,10 +21,15 @@ const int Entity::NOT_UPDATE;
 Entity::Entity() {
     Entity(0,0,1,1);
 }
->>>>>>> branchSz
 
-Entity::Entity(GLdouble u_min,GLdouble u_max,GLdouble v_min,GLdouble v_max)
+Entity::Entity(Material m) {
+    Entity(0,0,1,1,m);
+}
+
+Entity::Entity(GLdouble u_min,GLdouble u_max,GLdouble v_min,GLdouble v_max,Material m)
 {
+    material.setMaterial(m);
+
     BicubicBezierPatch *newPatch=new BicubicBezierPatch();
 
     patch=newPatch;
@@ -69,9 +70,6 @@ Entity::Entity(GLdouble u_min,GLdouble u_max,GLdouble v_min,GLdouble v_max)
     catch (Exception &e)
     {
         std::cout << e << std::endl;
-<<<<<<< HEAD
-    }
-=======
     } 
 
     real2Internal[SIDE_LEFT_TOP]=0;
@@ -212,7 +210,18 @@ GLboolean Entity::updateNeighbours(Entity &kivalto) {
             _neighbours[internal2Real[(interval+2)%8]]->updateNeighbours((*this));
     }
     return GL_TRUE;
->>>>>>> branchSz
+}
+
+void Entity::materialApply() {
+     material.Apply();
+}
+
+void Entity::setMaterial(Material m) {
+    material.setMaterial(m);
+}
+
+Material& Entity::getMaterial() {
+    return material;
 }
 
 Entity& Entity::operator [](unsigned int i)

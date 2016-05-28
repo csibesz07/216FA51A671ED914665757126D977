@@ -27,6 +27,8 @@ namespace cagd
             const Color4& back_emissive   = Color4(),
             GLfloat back_shininess        = 128.0);
 
+        GLvoid setMaterial(Material &m);
+
         GLvoid SetAmbientColor(GLenum face, const Color4& c);
         GLvoid SetAmbientColor(GLenum face, GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
 
@@ -52,6 +54,7 @@ namespace cagd
 
         // homework
         GLboolean IsTransparent() const;
+
     };
 
     extern

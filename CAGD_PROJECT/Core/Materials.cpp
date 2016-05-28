@@ -29,6 +29,20 @@ Material::Material(
 {
 }
 
+GLvoid Material::setMaterial(Material &m){
+    _front_ambient=m._front_ambient;
+    _front_diffuse=m._front_diffuse;
+    _front_specular=m._front_specular;
+    _front_emissive=m._front_emissive;
+    _front_shininess=m._front_shininess;
+
+    _back_ambient=m._back_ambient;
+    _back_diffuse=m._back_diffuse;
+    _back_specular=m._back_specular;
+    _back_emissive=m._back_emissive;
+    _back_shininess=m._back_shininess;
+}
+
 GLvoid Material::SetAmbientColor(GLenum face, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
     switch (face)
