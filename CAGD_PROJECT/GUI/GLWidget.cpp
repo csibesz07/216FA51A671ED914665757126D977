@@ -396,6 +396,17 @@ void GLWidget::setShaderStatus(bool value)
     }
 }
 
+void GLWidget::select_y_point(QString value)
+{
+    qDebug() << value;
+}
+
+void GLWidget::set_point_x_position(int value)
+{
+    qDebug() << " " << value;
+    //modositja a kivalasztott pont x koordinatajat
+}
+
 GLWidget::~GLWidget()
 {
 }

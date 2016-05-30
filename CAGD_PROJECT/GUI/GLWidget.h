@@ -80,4 +80,16 @@ public slots:
     void set_trans_z(double value);
 
     void setShaderStatus(bool value);
+
+
+
+
+    //void select_x_point(int value);
+    void select_y_point(QString value);
+    void set_point_x_position(int value);
+   /* void set_point_y_position(int value);
+    void set_point_z_position(int value);
+    void select_patch_for_join();
+    void set_first_joning_side(QString value);
+    void set_second_joning_side(QString value);*/
 };
