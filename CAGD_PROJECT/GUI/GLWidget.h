@@ -6,12 +6,9 @@
 #include <QGLWidget>
 #include <QGLFormat>
 #include <QTimer>
-#include <QtDebug>
-#include <QMouseEvent>
 #include "../Core/TriangulatedMeshes3.h"
 #include "../Core/ShaderPrograms.h"
 #include "../Core/BicubicBezierPatches.h"
-#include "../Core/Entity.h"
 
 class GLWidget: public QGLWidget
 {
@@ -42,14 +39,10 @@ private:
     cagd::TriangulatedMesh3 _mouse;
 
     bool _apply_shader;
-    bool _move_camera;
 
-    cagd::Entity*     selected;
-    cagd::Material   selectedMaterial;
     cagd::BicubicBezierPatch     _patch;
-    cagd::TriangulatedMesh3      *_mesh;
-    std::vector<cagd::Entity*>    entities;
-    QPoint lastPos;
+    cagd::TriangulatedMesh3      *_before_interpolation, *_after_interpolation, *_mesh;
+    cagd::CompositeBezierSurface *cs;
 
 public:
     // special and default constructor
@@ -61,9 +54,7 @@ public:
     void paintGL();
     void resizeGL(int w, int h);
     void mouseMoveEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent *event);
-    void keyPressEvent(QKeyEvent* event);
-    //bool eventFilter(QObject *object, QEvent *ev);
+
     ~GLWidget();
 
 public slots:
@@ -80,4 +71,16 @@ public slots:
     void set_trans_z(double value);
 
     void setShaderStatus(bool value);
+
+
+
+
+    //void select_x_point(int value);
+    void select_y_point(QString value);
+    void set_point_x_position(int value);
+   /* void set_point_y_position(int value);
+    void set_point_z_position(int value);
+    void select_patch_for_join();
+    void set_first_joning_side(QString value);
+    void set_second_joning_side(QString value);*/
 };
