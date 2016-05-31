@@ -51,7 +51,7 @@ namespace cagd
 
         // assignment operator
         TriangulatedMesh3& operator =(const TriangulatedMesh3& rhs);
-        std::vector<DCoordinate3> renderNormals();
+        GLvoid renderNormals();
         // deletes all vertex buffer objects
         GLvoid DeleteVertexBufferObjects();
 
