@@ -84,6 +84,8 @@ namespace cagd
 
         // destructor
         virtual ~TriangulatedMesh3();
+
+        GLvoid RenderNormals();
     };
 
     std::ostream& operator <<(std::ostream& lhs, const TriangulatedMesh3& rhs);

@@ -403,6 +403,21 @@ GLuint TriangulatedMesh3::FaceCount() const
 {
     return _face.size();
 }
+
+GLvoid TriangulatedMesh3::RenderNormals()
+{
+    glBegin(GL_LINES);
+    for (GLuint i = 0; i < _vertex.size(); ++i)
+    {
+        glVertex3dv(&_vertex[i][0]);
+
+        DCoordinate3 sum = _vertex[i] + 0.5 * _normal[i];
+
+        glVertex3dv(&sum[0]);
+    }
+    glEnd();
+}
+
 // output to stream
 std::ostream& cagd::operator <<(std::ostream& lhs, const TriangulatedMesh3& rhs)
 {
