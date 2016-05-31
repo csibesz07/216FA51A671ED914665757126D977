@@ -261,6 +261,7 @@ void GLWidget::paintGL()
             (*it)->materialApply();
             glStencilFunc(GL_ALWAYS, i + 1, -1);
             (*it)->mesh->Render();
+            (*it)->mesh->renderNormals();
         }
     }
 

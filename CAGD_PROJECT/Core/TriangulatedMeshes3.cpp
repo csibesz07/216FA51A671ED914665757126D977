@@ -15,6 +15,9 @@ TriangulatedMesh3::TriangulatedMesh3(GLuint vertex_count, GLuint face_count, GLe
     _tex.resize(vertex_count);
     _face.resize(face_count);
 }
+void TriangulatedMesh3::renderNormals(){
+
+}
 
 TriangulatedMesh3::TriangulatedMesh3(const TriangulatedMesh3 &mesh):
         _usage_flag(mesh._usage_flag),
