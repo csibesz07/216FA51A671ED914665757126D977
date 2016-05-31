@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
 
 
     //connect(_side_widget->x_point, SIGNAL(currentIndexChanged(int)), _gl_widget, SLOT(select_x_point(int)));
-    connect(_side_widget->y_point, SIGNAL(currentIndexChanged(QString)), _gl_widget, SLOT(select_y_point(QString)));
+    connect(_side_widget->y_point, SIGNAL(currentIndexChanged(int)), _gl_widget, SLOT(select_y_point(int)));
 
     connect(_side_widget->change_x_slider, SIGNAL(valueChanged(int)), _gl_widget, SLOT(set_point_x_position(int)));
     //connect(_side_widget->change_y_slider, SIGNAL(valueChanged(int)), _gl_widget, SLOT(set_point_y_position(int)));
@@ -68,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent)
     //connect(_side_widget->first_patch_side, SIGNAL(currentIndexChanged(QString)), _gl_widget, SLOT(set_first_joning_side(QString)));
     //connect(_side_widget->second_patch_side, SIGNAL(currentIndexChanged(QString)), _gl_widget, SLOT(set_second_joning_side(QString)));
 
+
+    connect(_gl_widget, SIGNAL(valueChanged(bool)), _side_widget, SLOT(set_combo(bool)));
 }
 
 //--------------------------------

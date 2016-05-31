@@ -2,6 +2,7 @@
 #include "../Core/Materials.h"
 #include "../Core/Constants.h"
 #include "../Core/Exceptions.h"
+#include "../Core/Lights.h"
 
 using namespace cagd;
 using namespace std;
@@ -25,6 +26,9 @@ void getMouse(int x, int y) {
 //--------------------------------------------------------------------------------------
 void GLWidget::initializeGL()
 {
+
+    selected_x = 0;
+    selected_y = 0;
 
     // creating a perspective projection matrix
     glMatrixMode(GL_PROJECTION);
@@ -81,6 +85,8 @@ void GLWidget::initializeGL()
     e4->JoinExistingTwoPatches(*e1,2,1);
 
     selected=0;
+    select_second_patch = false;
+
     lastPos.setX(0);
     lastPos.setY(0);
     _move_camera=false;
@@ -90,7 +96,7 @@ void GLWidget::initializeGL()
 void GLWidget::mouseMoveEvent(QMouseEvent *event){
 
     //selection
-    int index=0;
+   /* int index=0;
     glReadPixels(event->x(), height()-event->y(), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
     if (index>0) {
         if (selected!=0) {
@@ -102,17 +108,17 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event){
         updateGL();
     }
     else {
-        if (selected!=0) {
+        if (selected!=0 && !selected_w_click) {
             selected->setMaterial(selectedMaterial);
             updateGL();
         }
-    }
+    }*/
 
     //camera rotation
     int dx = event->x() - lastPos.x();
     int dy = event->y() - lastPos.y();
 
-    qDebug() << dx<<" "<<dy;
+    //qDebug() << dx<<" "<<dy;
 
     if (event->buttons() & Qt::LeftButton) {
         if (!_move_camera) {
@@ -142,6 +148,30 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event){
         updateGL();
     }
     lastPos = event->pos();
+}
+
+void GLWidget::mousePressEvent(QMouseEvent *event)
+{
+    //selection
+    int index=0;
+    glReadPixels(event->x(), height()-event->y(), 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+    if (index>0) {
+        if (selected!=0) {
+            selected->setMaterial(selectedMaterial);
+        }
+        selected=entities[index-1];
+        selectedMaterial.setMaterial(entities[index-1]->getMaterial());
+        entities[index-1]->setMaterial(MatFBEmerald);
+        setValue(true);
+        updateGL();
+    }
+    else {
+        if (selected!=0) {
+            selected->setMaterial(selectedMaterial);
+            setValue(false);
+            updateGL();
+        }
+    }
 }
 
 void GLWidget::wheelEvent(QWheelEvent *event)
@@ -252,17 +282,33 @@ void GLWidget::paintGL()
             }
         }
     }
+
+   /* DirectionalLight *dl=0;
+    HCoordinate3 direction(25.0,0.0,1.0,0.0);
+    Color4 ambient(0.4,0.4,0.4,1.0);
+    Color4 diffuse(0.8,0.8,0.8,1.0);
+    Color4 specular(1.0,1.0,1.0,1.0);
+    dl = new DirectionalLight(GL_LIGHT0,direction,ambient,diffuse,specular);*/
+
     glEnable(GL_LIGHTING);
 
-    for(std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+  /*  if(dl)
     {
-        int i = std::distance(entities.begin(), it);
-        if ((*it)->mesh) {
-            (*it)->materialApply();
-            glStencilFunc(GL_ALWAYS, i + 1, -1);
-            (*it)->mesh->Render();
+        dl->Enable();*/
+
+        for(std::vector<Entity*>::iterator it = entities.begin(); it != entities.end(); ++it)
+        {
+            int i = std::distance(entities.begin(), it);
+            if ((*it)->mesh) {
+                (*it)->materialApply();
+                glStencilFunc(GL_ALWAYS, i + 1, -1);
+                (*it)->mesh->Render();
+                (*it)->mesh->RenderNormals();
+            }
         }
-    }
+
+      /*  dl->Disable();
+    }*/
 
     glPopMatrix();
 
@@ -396,15 +442,25 @@ void GLWidget::setShaderStatus(bool value)
     }
 }
 
-void GLWidget::select_y_point(QString value)
+void GLWidget::select_x_point(int value)
 {
-    qDebug() << value;
+    selected_x = value;
+}
+
+void GLWidget::select_y_point(int value)
+{
+    selected_y = value;
 }
 
 void GLWidget::set_point_x_position(int value)
 {
-    qDebug() << " " << value;
+    //qDebug() << " " << value;
     //modositja a kivalasztott pont x koordinatajat
+}
+
+void GLWidget::setValue(bool value)
+{
+    emit valueChanged(value);
 }
 
 GLWidget::~GLWidget()

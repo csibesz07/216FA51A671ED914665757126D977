@@ -15,7 +15,7 @@
 
 class GLWidget: public QGLWidget
 {
-    Q_OBJECT
+    Q_OBJECT;
 protected:
     //model
     cagd::ShaderProgram _shader;
@@ -43,6 +43,9 @@ private:
 
     bool _apply_shader;
     bool _move_camera;
+    bool select_second_patch;
+
+    int selected_x, selected_y;
 
     cagd::Entity*     selected;
     cagd::Material   selectedMaterial;
@@ -61,9 +64,11 @@ public:
     void paintGL();
     void resizeGL(int w, int h);
     void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
     void wheelEvent(QWheelEvent *event);
     void keyPressEvent(QKeyEvent* event);
     //bool eventFilter(QObject *object, QEvent *ev);
+
     ~GLWidget();
 
 public slots:
@@ -84,12 +89,18 @@ public slots:
 
 
 
-    //void select_x_point(int value);
-    void select_y_point(QString value);
+    void select_x_point(int value);
+    void select_y_point(int value);
     void set_point_x_position(int value);
    /* void set_point_y_position(int value);
     void set_point_z_position(int value);
     void select_patch_for_join();
     void set_first_joning_side(QString value);
     void set_second_joning_side(QString value);*/
+
+    void setValue(bool value);
+
+signals:
+
+    void valueChanged(bool newValue);
 };
