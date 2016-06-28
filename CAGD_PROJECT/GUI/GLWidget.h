@@ -53,6 +53,9 @@ private:
     cagd::TriangulatedMesh3      *_mesh;
     std::vector<cagd::Entity*>    entities;
     QPoint lastPos;
+  //  cagd::RowMatrix<GLdouble>            u_knot_vector;
+    //cagd::ColumnMatrix<GLdouble>         v_knot_vector;
+    //cagd::Matrix<cagd::DCoordinate3>     data_points_to_interpolate;
 
 public:
     // special and default constructor

@@ -2,6 +2,8 @@
 #include "../Core/Exceptions.h"
 #include "Entity.h"
 #include "cmath"
+#include "random"
+#include "time.h"
 
 using namespace cagd;
 using namespace std;
@@ -37,6 +39,8 @@ Entity::Entity(GLdouble u_min,GLdouble u_max,GLdouble v_min,GLdouble v_max,Mater
     GLdouble step_u = (u_max - u_min) / 3;
     GLdouble step_v = (v_max - v_min) / 3;
 
+    srand(time(NULL));
+
     for (GLuint i = 0; i < 4; ++i)
     {
         GLdouble u = u_min + i * step_u;
@@ -49,7 +53,8 @@ Entity::Entity(GLdouble u_min,GLdouble u_max,GLdouble v_min,GLdouble v_max,Mater
 
             ref[0] = u;
             ref[1] = v;
-            ref[2] = (v+u)/2;
+            //ref[2] = (v+u)/2;
+            ref[2] = random()%100/10;
         }
     }
 
